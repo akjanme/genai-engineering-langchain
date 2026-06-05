@@ -3,12 +3,12 @@ import streamlit as st
 from langchain.chains import create_history_aware_retriever, create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_chroma import Chroma
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_groq import ChatGroq
-from langchain_core.runnables.history import RunnableWithMessageHistory
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_core.runnables.history import RunnableWithMessageHistory 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import PyPDFLoader
 import os
@@ -16,9 +16,15 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-os.environ['HF_TOKEN']=os.getenv("HF_TOKEN")
-embeddings=HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+hf_token = os.getenv("HF_TOKEN")
 
+if not hf_token:
+    raise ValueError("HF_TOKEN is not configured")
+
+os.environ["HF_TOKEN"] = hf_token
+embeddings = HuggingFaceEmbeddings(
+    model_name="sentence-transformers/all-MiniLM-L6-v2"
+)
 
 ## set up Streamlit 
 st.title("Conversational RAG With PDF uplaods and chat history")
